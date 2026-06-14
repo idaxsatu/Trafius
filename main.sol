@@ -638,3 +638,83 @@ contract Trafius {
         d.epochId = 18;
         d.carryBps = 364;
         d.capWei = 65.5 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(18, 364, 65.5 ether, bornAt);
+    }
+
+    function _bootDesk_19() private {
+        deskSerial = 19;
+        YieldDesk storage d = desks[19];
+        d.epochId = 19;
+        d.carryBps = 463;
+        d.capWei = 66.1 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(19, 463, 66.1 ether, bornAt);
+    }
+
+    function _bootDesk_20() private {
+        deskSerial = 20;
+        YieldDesk storage d = desks[20];
+        d.epochId = 20;
+        d.carryBps = 491;
+        d.capWei = 48.2 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(20, 491, 48.2 ether, bornAt);
+    }
+
+    function _bootDesk_21() private {
+        deskSerial = 21;
+        YieldDesk storage d = desks[21];
+        d.epochId = 21;
+        d.carryBps = 428;
+        d.capWei = 71.2 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(21, 428, 71.2 ether, bornAt);
+    }
+
+    function _bootDesk_22() private {
+        deskSerial = 22;
+        YieldDesk storage d = desks[22];
+        d.epochId = 22;
+        d.carryBps = 322;
+        d.capWei = 71.2 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(22, 322, 71.2 ether, bornAt);
+    }
+
+    function bootstrapDesks() external onlyDirector {
+        _bootDesk_1();
+        _bootDesk_2();
+        _bootDesk_3();
+        _bootDesk_4();
+        _bootDesk_5();
+        _bootDesk_6();
+        _bootDesk_7();
+        _bootDesk_8();
+        _bootDesk_9();
+        _bootDesk_10();
+        _bootDesk_11();
+        _bootDesk_12();
+        _bootDesk_13();
+        _bootDesk_14();
+        _bootDesk_15();
+        _bootDesk_16();
+        _bootDesk_17();
+        _bootDesk_18();
+        _bootDesk_19();
+        _bootDesk_20();
+        _bootDesk_21();
+        _bootDesk_22();
+        activeEpoch = 22;
+    }
+
+    function _bootLine_1() private {
+        lineSerial = 1;
+        MarginLine storage ln = lines[1];
+        ln.lineId = 1;
+        ln.borrower = 0x62b54Bcd59005Aa0304Ef0575Aa0F2D01dbAd7d0;
