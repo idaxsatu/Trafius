@@ -718,3 +718,83 @@ contract Trafius {
         MarginLine storage ln = lines[1];
         ln.lineId = 1;
         ln.borrower = 0x62b54Bcd59005Aa0304Ef0575Aa0F2D01dbAd7d0;
+        ln.limitWei = 8.426 ether;
+        ln.rateBps = 989;
+        ln.openedAt = bornAt;
+        ln.lastAccrual = bornAt;
+        emit LineOpened(1, 0x62b54Bcd59005Aa0304Ef0575Aa0F2D01dbAd7d0, 8.426 ether, 989);
+    }
+
+    function _bootLine_2() private {
+        lineSerial = 2;
+        MarginLine storage ln = lines[2];
+        ln.lineId = 2;
+        ln.borrower = 0xb7e512AD32f868807707F07fedc11e2657F24613;
+        ln.limitWei = 2.445 ether;
+        ln.rateBps = 632;
+        ln.openedAt = bornAt;
+        ln.lastAccrual = bornAt;
+        emit LineOpened(2, 0xb7e512AD32f868807707F07fedc11e2657F24613, 2.445 ether, 632);
+    }
+
+    function _bootLine_3() private {
+        lineSerial = 3;
+        MarginLine storage ln = lines[3];
+        ln.lineId = 3;
+        ln.borrower = 0xd620df9F3BED1c900a12B45735ae8B854afbdfbc;
+        ln.limitWei = 6.889 ether;
+        ln.rateBps = 858;
+        ln.openedAt = bornAt;
+        ln.lastAccrual = bornAt;
+        emit LineOpened(3, 0xd620df9F3BED1c900a12B45735ae8B854afbdfbc, 6.889 ether, 858);
+    }
+
+    function _bootLine_4() private {
+        lineSerial = 4;
+        MarginLine storage ln = lines[4];
+        ln.lineId = 4;
+        ln.borrower = 0x62b54Bcd59005Aa0304Ef0575Aa0F2D01dbAd7d0;
+        ln.limitWei = 9.234 ether;
+        ln.rateBps = 644;
+        ln.openedAt = bornAt;
+        ln.lastAccrual = bornAt;
+        emit LineOpened(4, 0x62b54Bcd59005Aa0304Ef0575Aa0F2D01dbAd7d0, 9.234 ether, 644);
+    }
+
+    function _bootLine_5() private {
+        lineSerial = 5;
+        MarginLine storage ln = lines[5];
+        ln.lineId = 5;
+        ln.borrower = 0xb7e512AD32f868807707F07fedc11e2657F24613;
+        ln.limitWei = 7.851 ether;
+        ln.rateBps = 945;
+        ln.openedAt = bornAt;
+        ln.lastAccrual = bornAt;
+        emit LineOpened(5, 0xb7e512AD32f868807707F07fedc11e2657F24613, 7.851 ether, 945);
+    }
+
+    function _bootLine_6() private {
+        lineSerial = 6;
+        MarginLine storage ln = lines[6];
+        ln.lineId = 6;
+        ln.borrower = 0xd620df9F3BED1c900a12B45735ae8B854afbdfbc;
+        ln.limitWei = 5.760 ether;
+        ln.rateBps = 614;
+        ln.openedAt = bornAt;
+        ln.lastAccrual = bornAt;
+        emit LineOpened(6, 0xd620df9F3BED1c900a12B45735ae8B854afbdfbc, 5.760 ether, 614);
+    }
+
+    function _bootLine_7() private {
+        lineSerial = 7;
+        MarginLine storage ln = lines[7];
+        ln.lineId = 7;
+        ln.borrower = 0x62b54Bcd59005Aa0304Ef0575Aa0F2D01dbAd7d0;
+        ln.limitWei = 3.833 ether;
+        ln.rateBps = 842;
+        ln.openedAt = bornAt;
+        ln.lastAccrual = bornAt;
+        emit LineOpened(7, 0x62b54Bcd59005Aa0304Ef0575Aa0F2D01dbAd7d0, 3.833 ether, 842);
+    }
+
+    function _bootLine_8() private {
