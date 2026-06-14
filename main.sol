@@ -78,3 +78,83 @@ contract Trafius {
     event RateSet(uint256 indexed slot, uint256 benchmarkBps, uint64 at);
     event DeskFreeze(bool frozen, uint64 at);
     event DirectorProposed(address indexed current, address indexed pending);
+    event DirectorAccepted(address indexed previous, address indexed newDirector);
+    event InboundWei(address indexed from, uint256 amount);
+    event Pulse_0(uint256 indexed serial, uint256 meta, uint64 at);
+    event Pulse_1(uint256 indexed serial, uint256 meta, uint64 at);
+    event Pulse_2(uint256 indexed serial, uint256 meta, uint64 at);
+    event Pulse_3(uint256 indexed serial, uint256 meta, uint64 at);
+    event Pulse_4(uint256 indexed serial, uint256 meta, uint64 at);
+
+    uint256 public constant TRF_BPS = 10000;
+    uint256 public constant TRF_MAX_CARRY_BPS = 949;
+    uint256 public constant TRF_MAX_MARGIN_BPS = 2520;
+    uint256 public constant TRF_MAX_COUPON_BPS = 752;
+    uint256 public constant TRF_MIN_COLLATERAL = 0.06 ether;
+    uint256 public constant TRF_LIQ_BAND_BPS = 1345;
+    bytes32 public constant TRF_DOMAIN_SALT = 0x7f12a99de5c2b66e18859fcaff32b4b8d3493cb8eaaad8c9a8702030347e4acf;
+
+    address public director;
+    address public immutable ADDRESS_A;
+    address public immutable ADDRESS_B;
+    address public immutable ADDRESS_C;
+    uint64 public immutable bornAt;
+    address public pendingDirector;
+    bool public deskFrozen;
+    uint256 private _gate;
+    uint256 public deskSerial;
+    uint256 public lineSerial;
+    uint256 public noteSerial;
+    uint256 public laneSerial;
+    uint256 public pulseSerial;
+    uint256 public activeEpoch;
+
+    struct YieldDesk {
+        uint256 epochId;
+        uint256 carryBps;
+        uint256 capWei;
+        uint256 totalStaked;
+        uint256 totalShares;
+        uint64 openedAt;
+        bool live;
+    }
+
+    struct MarginLine {
+        uint256 lineId;
+        address borrower;
+        uint256 collateralWei;
+        uint256 borrowedWei;
+        uint256 limitWei;
+        uint256 rateBps;
+        uint64 openedAt;
+        uint64 lastAccrual;
+        bool halted;
+    }
+
+    struct TrancheNote {
+        uint256 noteId;
+        address holder;
+        uint256 faceWei;
+        uint256 couponBps;
+        uint64 issuedAt;
+        uint64 maturesAt;
+        bool redeemed;
+    }
+
+    struct SettlementLane {
+        uint256 laneId;
+        address partyA;
+        address partyB;
+        uint256 capWei;
+        uint256 movedWei;
+        bool paused;
+    }
+
+    mapping(uint256 => YieldDesk) public desks;
+    mapping(uint256 => mapping(address => uint256)) public deskShares;
+    mapping(uint256 => MarginLine) public lines;
+    mapping(uint256 => TrancheNote) public notes;
+    mapping(uint256 => SettlementLane) public lanes;
+    mapping(uint256 => uint256) public rateSlotBps;
+    mapping(address => uint256[]) private _stakerEpochs;
+    mapping(address => uint256[]) private _borrowerLines;
