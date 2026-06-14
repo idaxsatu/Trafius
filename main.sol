@@ -398,3 +398,83 @@ contract Trafius {
         SettlementLane storage ln = lanes[laneId];
         ln.laneId = laneId;
         ln.partyA = ADDRESS_A;
+        ln.partyB = partyB;
+        ln.capWei = capWei;
+        emit LaneOpened(laneId, ln.partyA, partyB, capWei);
+    }
+
+    function pauseLane(uint256 laneId, bool paused) external onlyDirector {
+        SettlementLane storage ln = lanes[laneId];
+        if (ln.laneId == 0) revert TRF_LaneMissing();
+        ln.paused = paused;
+    }
+
+    function postSettlement(uint256 laneId, bytes32 tag) external payable deskOpen nonReentrant {
+        if (msg.value == 0) revert TRF_ZeroWei();
+        SettlementLane storage ln = lanes[laneId];
+        if (ln.laneId == 0) revert TRF_LaneMissing();
+        if (ln.paused) revert TRF_LanePaused();
+        if (msg.sender != ln.partyA && msg.sender != ln.partyB) revert TRF_Counterparty();
+        ln.movedWei = TrfGauge.safeAdd(ln.movedWei, msg.value, ln.capWei);
+        emit Settled(laneId, tag, msg.value, msg.sender);
+    }
+
+    function _accrueLine(MarginLine storage ln) internal {
+        uint64 nowTs = uint64(block.timestamp);
+        if (nowTs <= ln.lastAccrual) return;
+        ln.lastAccrual = nowTs;
+    }
+
+    function deskDigest(uint256 deskId) external view returns (bytes32) {
+        YieldDesk storage d = desks[deskId];
+        bytes32 hA = keccak256(abi.encode(d.epochId, d.carryBps, d.capWei, d.totalStaked));
+        bytes32 hB = keccak256(abi.encode(d.totalShares, d.openedAt, d.live, TRF_DOMAIN_SALT));
+        return keccak256(abi.encodePacked(hA, hB));
+    }
+
+    function lineDigest(uint256 lineId) external view returns (bytes32) {
+        MarginLine storage ln = lines[lineId];
+        bytes32 hA = keccak256(abi.encode(ln.borrower, ln.collateralWei, ln.borrowedWei));
+        bytes32 hB = keccak256(abi.encode(ln.limitWei, ln.rateBps, ln.halted, ln.lastAccrual));
+        return keccak256(abi.encodePacked(hA, hB));
+    }
+
+    function seatFingerprint() external view returns (bytes32) {
+        bytes32 hA = keccak256(abi.encode(ADDRESS_A, ADDRESS_B, bornAt));
+        bytes32 hB = keccak256(abi.encode(ADDRESS_C, activeEpoch, deskSerial));
+        return keccak256(abi.encodePacked(hA, hB));
+    }
+
+    function _bootDesk_1() private {
+        deskSerial = 1;
+        YieldDesk storage d = desks[1];
+        d.epochId = 1;
+        d.carryBps = 392;
+        d.capWei = 21.3 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(1, 392, 21.3 ether, bornAt);
+    }
+
+    function _bootDesk_2() private {
+        deskSerial = 2;
+        YieldDesk storage d = desks[2];
+        d.epochId = 2;
+        d.carryBps = 406;
+        d.capWei = 42.8 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(2, 406, 42.8 ether, bornAt);
+    }
+
+    function _bootDesk_3() private {
+        deskSerial = 3;
+        YieldDesk storage d = desks[3];
+        d.epochId = 3;
+        d.carryBps = 302;
+        d.capWei = 49.6 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(3, 302, 49.6 ether, bornAt);
+    }
+
