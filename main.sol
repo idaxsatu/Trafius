@@ -558,3 +558,83 @@ contract Trafius {
     function _bootDesk_11() private {
         deskSerial = 11;
         YieldDesk storage d = desks[11];
+        d.epochId = 11;
+        d.carryBps = 374;
+        d.capWei = 50.7 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(11, 374, 50.7 ether, bornAt);
+    }
+
+    function _bootDesk_12() private {
+        deskSerial = 12;
+        YieldDesk storage d = desks[12];
+        d.epochId = 12;
+        d.carryBps = 355;
+        d.capWei = 56.4 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(12, 355, 56.4 ether, bornAt);
+    }
+
+    function _bootDesk_13() private {
+        deskSerial = 13;
+        YieldDesk storage d = desks[13];
+        d.epochId = 13;
+        d.carryBps = 396;
+        d.capWei = 52.4 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(13, 396, 52.4 ether, bornAt);
+    }
+
+    function _bootDesk_14() private {
+        deskSerial = 14;
+        YieldDesk storage d = desks[14];
+        d.epochId = 14;
+        d.carryBps = 386;
+        d.capWei = 62.1 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(14, 386, 62.1 ether, bornAt);
+    }
+
+    function _bootDesk_15() private {
+        deskSerial = 15;
+        YieldDesk storage d = desks[15];
+        d.epochId = 15;
+        d.carryBps = 470;
+        d.capWei = 58.5 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(15, 470, 58.5 ether, bornAt);
+    }
+
+    function _bootDesk_16() private {
+        deskSerial = 16;
+        YieldDesk storage d = desks[16];
+        d.epochId = 16;
+        d.carryBps = 387;
+        d.capWei = 48.3 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(16, 387, 48.3 ether, bornAt);
+    }
+
+    function _bootDesk_17() private {
+        deskSerial = 17;
+        YieldDesk storage d = desks[17];
+        d.epochId = 17;
+        d.carryBps = 311;
+        d.capWei = 58.1 ether;
+        d.openedAt = bornAt;
+        d.live = true;
+        emit Opened(17, 311, 58.1 ether, bornAt);
+    }
+
+    function _bootDesk_18() private {
+        deskSerial = 18;
+        YieldDesk storage d = desks[18];
+        d.epochId = 18;
+        d.carryBps = 364;
+        d.capWei = 65.5 ether;
