@@ -318,3 +318,83 @@ contract Trafius {
         if (msg.sender != ln.borrower) revert TRF_NotBorrower();
         _accrueLine(ln);
         if (ln.borrowedWei + weiOut > ln.limitWei) revert TRF_LimitHit();
+        uint256 health = TrfGauge.healthBps(ln.collateralWei, ln.borrowedWei + weiOut, TRF_MIN_COLLATERAL);
+        if (health < TRF_LIQ_BAND_BPS) revert TRF_HealthLow();
+        if (address(this).balance < weiOut) revert TRF_SendFail();
+        ln.borrowedWei += weiOut;
+        (bool ok,) = msg.sender.call{value: weiOut}("");
+        if (!ok) revert TRF_SendFail();
+        emit Drawn(lineId, msg.sender, weiOut);
+    }
+
+    function repayLine(uint256 lineId) external payable deskOpen nonReentrant {
+        if (msg.value == 0) revert TRF_ZeroWei();
+        MarginLine storage ln = lines[lineId];
+        if (ln.lineId == 0) revert TRF_LineMissing();
+        _accrueLine(ln);
+        uint256 interest = TrfGauge.mulBps(ln.borrowedWei, ln.rateBps);
+        uint256 owed = ln.borrowedWei + interest;
+        uint256 pay = msg.value > owed ? owed : msg.value;
+        uint256 principal = pay > interest ? pay - interest : 0;
+        if (principal > ln.borrowedWei) principal = ln.borrowedWei;
+        ln.borrowedWei -= principal;
+        emit Repaid(lineId, msg.sender, principal, pay - principal);
+    }
+
+    function liquidateLine(uint256 lineId) external deskOpen nonReentrant {
+        MarginLine storage ln = lines[lineId];
+        if (ln.lineId == 0) revert TRF_LineMissing();
+        _accrueLine(ln);
+        uint256 health = TrfGauge.healthBps(ln.collateralWei, ln.borrowedWei, TRF_MIN_COLLATERAL);
+        if (health >= TRF_LIQ_BAND_BPS) revert TRF_NotLiquidatable();
+        uint256 seized = ln.collateralWei;
+        ln.collateralWei = 0;
+        ln.borrowedWei = 0;
+        ln.halted = true;
+        if (seized > 0) {
+            (bool ok,) = msg.sender.call{value: seized}("");
+            if (!ok) revert TRF_SendFail();
+        }
+        emit Liquidated(lineId, msg.sender, seized);
+    }
+
+    function issueTranche(uint256 tenorDays, uint256 couponBps) external payable deskOpen nonReentrant returns (uint256 noteId) {
+        if (msg.value == 0) revert TRF_ZeroWei();
+        if (tenorDays == 0 || tenorDays > 3650) revert TRF_BadEpoch();
+        if (couponBps > TRF_MAX_COUPON_BPS) revert TRF_RateHigh();
+        noteId = ++noteSerial;
+        TrancheNote storage n = notes[noteId];
+        n.noteId = noteId;
+        n.holder = msg.sender;
+        n.faceWei = msg.value;
+        n.couponBps = couponBps;
+        n.issuedAt = uint64(block.timestamp);
+        n.maturesAt = n.issuedAt + uint64(tenorDays * 1 days);
+        emit TrancheIssued(noteId, tenorDays, couponBps, msg.value);
+    }
+
+    function redeemTranche(uint256 noteId) external deskOpen nonReentrant {
+        TrancheNote storage n = notes[noteId];
+        if (n.noteId == 0) revert TRF_TrancheMissing();
+        if (n.redeemed) revert TRF_TrancheOpen();
+        if (block.timestamp < n.maturesAt) revert TRF_TrancheMature();
+        if (msg.sender != n.holder) revert TRF_NotBorrower();
+        n.redeemed = true;
+        uint256 coupon = TrfGauge.mulBps(n.faceWei, n.couponBps);
+        uint256 payout = n.faceWei;
+        if (address(this).balance >= n.faceWei + coupon) {
+            payout += coupon;
+        }
+        if (address(this).balance < payout) revert TRF_SendFail();
+        (bool ok,) = msg.sender.call{value: payout}("");
+        if (!ok) revert TRF_SendFail();
+        emit Redeemed(noteId, msg.sender, payout);
+    }
+
+    function openLane(address partyB, uint256 capWei) external onlyDirector returns (uint256 laneId) {
+        if (partyB == address(0)) revert TRF_ZeroAddr();
+        if (capWei == 0) revert TRF_ZeroWei();
+        laneId = ++laneSerial;
+        SettlementLane storage ln = lanes[laneId];
+        ln.laneId = laneId;
+        ln.partyA = ADDRESS_A;
