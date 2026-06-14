@@ -238,3 +238,83 @@ contract Trafius {
     function toggleDesk(uint256 deskId, bool live) external onlyDirector {
         YieldDesk storage d = desks[deskId];
         if (d.epochId == 0) revert TRF_DeskMissing();
+        d.live = live;
+    }
+
+    function stakeDesk(uint256 deskId) external payable deskOpen nonReentrant {
+        if (msg.value == 0) revert TRF_ZeroWei();
+        YieldDesk storage d = desks[deskId];
+        if (d.epochId == 0) revert TRF_DeskMissing();
+        if (!d.live) revert TRF_DeskOff();
+        uint256 next = TrfGauge.safeAdd(d.totalStaked, msg.value, d.capWei);
+        d.totalStaked = next;
+        uint256 minted = msg.value;
+        if (d.totalShares > 0) {
+            minted = (msg.value * d.totalShares) / (d.totalStaked - msg.value);
+            if (minted == 0) minted = 1;
+        }
+        minted = (minted * (TRF_BPS - d.carryBps)) / TRF_BPS;
+        if (minted == 0) minted = 1;
+        d.totalShares += minted;
+        deskShares[deskId][msg.sender] += minted;
+        _stakerEpochs[msg.sender].push(deskId);
+        emit Staked(d.epochId, msg.sender, msg.value, minted);
+    }
+
+    function claimDesk(uint256 deskId, uint256 shareAmt) external deskOpen nonReentrant {
+        if (shareAmt == 0) revert TRF_ZeroWei();
+        YieldDesk storage d = desks[deskId];
+        if (d.epochId == 0) revert TRF_DeskMissing();
+        uint256 held = deskShares[deskId][msg.sender];
+        if (held < shareAmt) revert TRF_StakeGone();
+        uint256 gross = (shareAmt * d.totalStaked) / d.totalShares;
+        uint256 payout = gross;
+        if (address(this).balance < payout) revert TRF_SendFail();
+        deskShares[deskId][msg.sender] = held - shareAmt;
+        d.totalShares -= shareAmt;
+        d.totalStaked -= gross;
+        (bool ok,) = msg.sender.call{value: payout}("");
+        if (!ok) revert TRF_SendFail();
+        emit Claimed(d.epochId, msg.sender, shareAmt, payout);
+    }
+
+    function openLine(address borrower, uint256 limitWei, uint256 rateBps) external onlyDirector returns (uint256 lineId) {
+        if (borrower == address(0)) revert TRF_ZeroAddr();
+        if (limitWei == 0) revert TRF_ZeroWei();
+        if (rateBps > TRF_MAX_MARGIN_BPS) revert TRF_RateHigh();
+        lineId = ++lineSerial;
+        MarginLine storage ln = lines[lineId];
+        ln.lineId = lineId;
+        ln.borrower = borrower;
+        ln.limitWei = limitWei;
+        ln.rateBps = rateBps;
+        ln.openedAt = uint64(block.timestamp);
+        ln.lastAccrual = ln.openedAt;
+        _borrowerLines[borrower].push(lineId);
+        emit LineOpened(lineId, borrower, limitWei, rateBps);
+    }
+
+    function haltLine(uint256 lineId, bool halted) external onlyDirector {
+        MarginLine storage ln = lines[lineId];
+        if (ln.lineId == 0) revert TRF_LineMissing();
+        ln.halted = halted;
+    }
+
+    function postCollateral(uint256 lineId) external payable deskOpen nonReentrant {
+        if (msg.value == 0) revert TRF_ZeroWei();
+        MarginLine storage ln = lines[lineId];
+        if (ln.lineId == 0) revert TRF_LineMissing();
+        if (ln.halted) revert TRF_LineHalted();
+        if (msg.sender != ln.borrower) revert TRF_NotBorrower();
+        ln.collateralWei += msg.value;
+        emit CollateralPosted(lineId, msg.sender, msg.value);
+    }
+
+    function drawLine(uint256 lineId, uint256 weiOut) external deskOpen nonReentrant {
+        if (weiOut == 0) revert TRF_ZeroWei();
+        MarginLine storage ln = lines[lineId];
+        if (ln.lineId == 0) revert TRF_LineMissing();
+        if (ln.halted) revert TRF_LineHalted();
+        if (msg.sender != ln.borrower) revert TRF_NotBorrower();
+        _accrueLine(ln);
+        if (ln.borrowedWei + weiOut > ln.limitWei) revert TRF_LimitHit();
