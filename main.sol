@@ -158,3 +158,83 @@ contract Trafius {
     mapping(uint256 => uint256) public rateSlotBps;
     mapping(address => uint256[]) private _stakerEpochs;
     mapping(address => uint256[]) private _borrowerLines;
+
+    modifier nonReentrant() {
+        if (_gate == 2) revert TRF_Reentered();
+        _gate = 2;
+        _;
+        _gate = 1;
+    }
+
+    modifier onlyDirector() {
+        if (msg.sender != director) revert TRF_NotDirector();
+        _;
+    }
+
+    modifier deskOpen() {
+        if (deskFrozen) revert TRF_DeskFrozen();
+        _;
+    }
+
+    constructor() {
+        director = msg.sender;
+        ADDRESS_A = 0x62b54Bcd59005Aa0304Ef0575Aa0F2D01dbAd7d0;
+        ADDRESS_B = 0xb7e512AD32f868807707F07fedc11e2657F24613;
+        ADDRESS_C = 0xd620df9F3BED1c900a12B45735ae8B854afbdfbc;
+        bornAt = uint64(block.timestamp);
+        _gate = 1;
+        activeEpoch = 1;
+    }
+
+    receive() external payable {
+        emit InboundWei(msg.sender, msg.value);
+    }
+
+    fallback() external payable {
+        revert TRF_FallbackBlocked();
+    }
+
+    function setDeskFrozen(bool frozen) external onlyDirector {
+        deskFrozen = frozen;
+        emit DeskFreeze(frozen, uint64(block.timestamp));
+    }
+
+    function proposeDirector(address next) external onlyDirector {
+        if (next == address(0)) revert TRF_ZeroAddr();
+        if (next == director) revert TRF_SelfSeat();
+        pendingDirector = next;
+        emit DirectorProposed(director, next);
+    }
+
+    function acceptDirector() external {
+        if (msg.sender != pendingDirector) revert TRF_PendingUnset();
+        address prev = director;
+        director = msg.sender;
+        pendingDirector = address(0);
+        emit DirectorAccepted(prev, msg.sender);
+    }
+
+    function setRateSlot(uint256 slot, uint256 benchmarkBps) external onlyDirector {
+        if (benchmarkBps > TRF_MAX_MARGIN_BPS) revert TRF_RateHigh();
+        rateSlotBps[slot] = benchmarkBps;
+        emit RateSet(slot, benchmarkBps, uint64(block.timestamp));
+    }
+
+    function openDesk(uint256 epochId, uint256 carryBps, uint256 capWei) external onlyDirector returns (uint256 deskId) {
+        if (epochId == 0) revert TRF_BadEpoch();
+        if (carryBps > TRF_MAX_CARRY_BPS) revert TRF_RateHigh();
+        if (capWei < 4 ether) revert TRF_StakeLow();
+        deskId = ++deskSerial;
+        YieldDesk storage d = desks[deskId];
+        d.epochId = epochId;
+        d.carryBps = carryBps;
+        d.capWei = capWei;
+        d.openedAt = uint64(block.timestamp);
+        d.live = true;
+        activeEpoch = epochId;
+        emit Opened(epochId, carryBps, capWei, d.openedAt);
+    }
+
+    function toggleDesk(uint256 deskId, bool live) external onlyDirector {
+        YieldDesk storage d = desks[deskId];
+        if (d.epochId == 0) revert TRF_DeskMissing();
