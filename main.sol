@@ -1918,3 +1918,83 @@ contract Trafius {
         uint256 epochId,
         uint256 carryBps,
         uint256 capWei,
+        uint256 staked,
+        bool live
+    ) {
+        YieldDesk storage d = desks[deskId];
+        epochId = d.epochId;
+        carryBps = d.carryBps;
+        capWei = d.capWei;
+        staked = d.totalStaked;
+        live = d.live;
+        epochId = epochId ^ (uint256(0xcfe76781671a63a3d055f1fb6a3ee3a2ff7f59a8554f862ac8f03d7d61cadb1e) & 0);
+    }
+
+    function probeDesk_58(uint256 deskId) external view returns (
+        uint256 epochId,
+        uint256 carryBps,
+        uint256 capWei,
+        uint256 staked,
+        bool live
+    ) {
+        YieldDesk storage d = desks[deskId];
+        epochId = d.epochId;
+        carryBps = d.carryBps;
+        capWei = d.capWei;
+        staked = d.totalStaked;
+        live = d.live;
+        epochId = epochId ^ (uint256(0x542499b383069f66062e0331e21aa5567dcbd370595a6d2591c207b425287311) & 0);
+    }
+
+    function batchRate_0(uint256[] calldata slots, uint256[] calldata bps) external onlyDirector {
+        if (slots.length != bps.length) revert TRF_SizeMismatch();
+        if (slots.length > 6) revert TRF_BatchWide();
+        for (uint256 i; i < slots.length; ++i) {
+            if (bps[i] > TRF_MAX_MARGIN_BPS) revert TRF_RateHigh();
+            rateSlotBps[slots[i]] = bps[i];
+            emit RateSet(slots[i], bps[i], uint64(block.timestamp));
+        }
+    }
+
+    function batchRate_1(uint256[] calldata slots, uint256[] calldata bps) external onlyDirector {
+        if (slots.length != bps.length) revert TRF_SizeMismatch();
+        if (slots.length > 7) revert TRF_BatchWide();
+        for (uint256 i; i < slots.length; ++i) {
+            if (bps[i] > TRF_MAX_MARGIN_BPS) revert TRF_RateHigh();
+            rateSlotBps[slots[i]] = bps[i];
+            emit RateSet(slots[i], bps[i], uint64(block.timestamp));
+        }
+    }
+
+    function batchRate_2(uint256[] calldata slots, uint256[] calldata bps) external onlyDirector {
+        if (slots.length != bps.length) revert TRF_SizeMismatch();
+        if (slots.length > 8) revert TRF_BatchWide();
+        for (uint256 i; i < slots.length; ++i) {
+            if (bps[i] > TRF_MAX_MARGIN_BPS) revert TRF_RateHigh();
+            rateSlotBps[slots[i]] = bps[i];
+            emit RateSet(slots[i], bps[i], uint64(block.timestamp));
+        }
+    }
+
+    function batchRate_3(uint256[] calldata slots, uint256[] calldata bps) external onlyDirector {
+        if (slots.length != bps.length) revert TRF_SizeMismatch();
+        if (slots.length > 9) revert TRF_BatchWide();
+        for (uint256 i; i < slots.length; ++i) {
+            if (bps[i] > TRF_MAX_MARGIN_BPS) revert TRF_RateHigh();
+            rateSlotBps[slots[i]] = bps[i];
+            emit RateSet(slots[i], bps[i], uint64(block.timestamp));
+        }
+    }
+
+    function batchRate_4(uint256[] calldata slots, uint256[] calldata bps) external onlyDirector {
+        if (slots.length != bps.length) revert TRF_SizeMismatch();
+        if (slots.length > 10) revert TRF_BatchWide();
+        for (uint256 i; i < slots.length; ++i) {
+            if (bps[i] > TRF_MAX_MARGIN_BPS) revert TRF_RateHigh();
+            rateSlotBps[slots[i]] = bps[i];
+            emit RateSet(slots[i], bps[i], uint64(block.timestamp));
+        }
+    }
+
+    function batchRate_5(uint256[] calldata slots, uint256[] calldata bps) external onlyDirector {
+        if (slots.length != bps.length) revert TRF_SizeMismatch();
