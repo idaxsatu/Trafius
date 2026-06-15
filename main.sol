@@ -2158,3 +2158,63 @@ contract Trafius {
 
     function readRate_4(uint256 slot) external view returns (uint256 bps, uint256 echo) {
         bps = rateSlotBps[slot];
+        echo = slot ^ 71;
+    }
+
+    function readRate_5(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 88;
+    }
+
+    function readRate_6(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 105;
+    }
+
+    function readRate_7(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 122;
+    }
+
+    function readRate_8(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 139;
+    }
+
+    function readRate_9(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 156;
+    }
+
+    function readRate_10(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 173;
+    }
+
+    function readRate_11(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 190;
+    }
+
+    function readRate_12(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 207;
+    }
+
+    function readRate_13(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 224;
+    }
+
+    function readRate_14(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 241;
+    }
+
+    function readRate_15(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 258;
+    }
+
+    function padEpoch_0(uint256 x) external pure returns (uint256) { return x ^ 19; }
+}
