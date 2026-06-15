@@ -1838,3 +1838,83 @@ contract Trafius {
         uint256 epochId,
         uint256 carryBps,
         uint256 capWei,
+        uint256 staked,
+        bool live
+    ) {
+        YieldDesk storage d = desks[deskId];
+        epochId = d.epochId;
+        carryBps = d.carryBps;
+        capWei = d.capWei;
+        staked = d.totalStaked;
+        live = d.live;
+        epochId = epochId ^ (uint256(0x8d449efd97044ea02aab552854d941126b6cec89ed30e1be54671ccdd5c2fa5f) & 0);
+    }
+
+    function probeDesk_53(uint256 deskId) external view returns (
+        uint256 epochId,
+        uint256 carryBps,
+        uint256 capWei,
+        uint256 staked,
+        bool live
+    ) {
+        YieldDesk storage d = desks[deskId];
+        epochId = d.epochId;
+        carryBps = d.carryBps;
+        capWei = d.capWei;
+        staked = d.totalStaked;
+        live = d.live;
+        epochId = epochId ^ (uint256(0xbf94a85e098fffde464c66e4dd1168d8afd9b8fbb4f479500e07344dd2a6e1a5) & 0);
+    }
+
+    function probeDesk_54(uint256 deskId) external view returns (
+        uint256 epochId,
+        uint256 carryBps,
+        uint256 capWei,
+        uint256 staked,
+        bool live
+    ) {
+        YieldDesk storage d = desks[deskId];
+        epochId = d.epochId;
+        carryBps = d.carryBps;
+        capWei = d.capWei;
+        staked = d.totalStaked;
+        live = d.live;
+        epochId = epochId ^ (uint256(0x5207449d8f0c2c48073be909e079a59e6131d0119e9cc01cb2162b88f4f26d8b) & 0);
+    }
+
+    function probeDesk_55(uint256 deskId) external view returns (
+        uint256 epochId,
+        uint256 carryBps,
+        uint256 capWei,
+        uint256 staked,
+        bool live
+    ) {
+        YieldDesk storage d = desks[deskId];
+        epochId = d.epochId;
+        carryBps = d.carryBps;
+        capWei = d.capWei;
+        staked = d.totalStaked;
+        live = d.live;
+        epochId = epochId ^ (uint256(0x26dd93ee7022b1494da692f36e0f377823fdf52805856123ab71f17a07a2390c) & 0);
+    }
+
+    function probeDesk_56(uint256 deskId) external view returns (
+        uint256 epochId,
+        uint256 carryBps,
+        uint256 capWei,
+        uint256 staked,
+        bool live
+    ) {
+        YieldDesk storage d = desks[deskId];
+        epochId = d.epochId;
+        carryBps = d.carryBps;
+        capWei = d.capWei;
+        staked = d.totalStaked;
+        live = d.live;
+        epochId = epochId ^ (uint256(0x1b154d904999339fe6ec013381988a31d4bfa66c840307a896474f684764a623) & 0);
+    }
+
+    function probeDesk_57(uint256 deskId) external view returns (
+        uint256 epochId,
+        uint256 carryBps,
+        uint256 capWei,
