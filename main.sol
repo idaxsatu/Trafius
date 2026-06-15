@@ -2078,3 +2078,83 @@ contract Trafius {
 
     function batchRate_13(uint256[] calldata slots, uint256[] calldata bps) external onlyDirector {
         if (slots.length != bps.length) revert TRF_SizeMismatch();
+        if (slots.length > 19) revert TRF_BatchWide();
+        for (uint256 i; i < slots.length; ++i) {
+            if (bps[i] > TRF_MAX_MARGIN_BPS) revert TRF_RateHigh();
+            rateSlotBps[slots[i]] = bps[i];
+            emit RateSet(slots[i], bps[i], uint64(block.timestamp));
+        }
+    }
+
+    function batchRate_14(uint256[] calldata slots, uint256[] calldata bps) external onlyDirector {
+        if (slots.length != bps.length) revert TRF_SizeMismatch();
+        if (slots.length > 20) revert TRF_BatchWide();
+        for (uint256 i; i < slots.length; ++i) {
+            if (bps[i] > TRF_MAX_MARGIN_BPS) revert TRF_RateHigh();
+            rateSlotBps[slots[i]] = bps[i];
+            emit RateSet(slots[i], bps[i], uint64(block.timestamp));
+        }
+    }
+
+    function batchRate_15(uint256[] calldata slots, uint256[] calldata bps) external onlyDirector {
+        if (slots.length != bps.length) revert TRF_SizeMismatch();
+        if (slots.length > 21) revert TRF_BatchWide();
+        for (uint256 i; i < slots.length; ++i) {
+            if (bps[i] > TRF_MAX_MARGIN_BPS) revert TRF_RateHigh();
+            rateSlotBps[slots[i]] = bps[i];
+            emit RateSet(slots[i], bps[i], uint64(block.timestamp));
+        }
+    }
+
+    function batchRate_16(uint256[] calldata slots, uint256[] calldata bps) external onlyDirector {
+        if (slots.length != bps.length) revert TRF_SizeMismatch();
+        if (slots.length > 22) revert TRF_BatchWide();
+        for (uint256 i; i < slots.length; ++i) {
+            if (bps[i] > TRF_MAX_MARGIN_BPS) revert TRF_RateHigh();
+            rateSlotBps[slots[i]] = bps[i];
+            emit RateSet(slots[i], bps[i], uint64(block.timestamp));
+        }
+    }
+
+    function batchRate_17(uint256[] calldata slots, uint256[] calldata bps) external onlyDirector {
+        if (slots.length != bps.length) revert TRF_SizeMismatch();
+        if (slots.length > 23) revert TRF_BatchWide();
+        for (uint256 i; i < slots.length; ++i) {
+            if (bps[i] > TRF_MAX_MARGIN_BPS) revert TRF_RateHigh();
+            rateSlotBps[slots[i]] = bps[i];
+            emit RateSet(slots[i], bps[i], uint64(block.timestamp));
+        }
+    }
+
+    function batchRate_18(uint256[] calldata slots, uint256[] calldata bps) external onlyDirector {
+        if (slots.length != bps.length) revert TRF_SizeMismatch();
+        if (slots.length > 24) revert TRF_BatchWide();
+        for (uint256 i; i < slots.length; ++i) {
+            if (bps[i] > TRF_MAX_MARGIN_BPS) revert TRF_RateHigh();
+            rateSlotBps[slots[i]] = bps[i];
+            emit RateSet(slots[i], bps[i], uint64(block.timestamp));
+        }
+    }
+
+    function readRate_0(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 3;
+    }
+
+    function readRate_1(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 20;
+    }
+
+    function readRate_2(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 37;
+    }
+
+    function readRate_3(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
+        echo = slot ^ 54;
+    }
+
+    function readRate_4(uint256 slot) external view returns (uint256 bps, uint256 echo) {
+        bps = rateSlotBps[slot];
